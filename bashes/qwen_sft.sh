@@ -1,0 +1,1 @@
+FORCH_TORCHRUN=1 python cli.py train examples/train_qwen3/qwen3_lora_sft.yaml
