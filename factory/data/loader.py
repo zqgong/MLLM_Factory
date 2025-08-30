@@ -333,3 +333,25 @@ def get_dataset(
                 logger.info_rank0(f"Please launch the training with `tokenized_path: {data_args.tokenized_path}`.")
 
         return get_dataset_module(dataset_dict)
+
+
+def get_trl_dataset(
+    template: "Template",
+    model_args: "ModelArguments",
+    data_args: "DataArguments",
+    training_args: "Seq2SeqTrainingArguments",
+    stage: Literal["pt", "sft", "rm", "ppo", "kto"],
+    tokenizer: "PreTrainedTokenizer",
+    processor: Optional["ProcessorMixin"] = None,
+) -> "Dataset":
+    r"""Get the train dataset and optionally gets the evaluation dataset."""
+    
+    print(data_args)
+    dataset_names = data_args.dataset
+    dataset = []
+    for dataset_name, dataset_attr in zip(dataset_names, get_dataset_list(dataset_names, data_args.dataset_dir)):
+        print(dataset_attr.split, dataset_attr.dataset_name, dataset_name, data_args.dataset_dir)
+        data = load_dataset(dataset_attr.dataset_name,  split=dataset_attr.split)
+        dataset += data
+    
+    return dataset

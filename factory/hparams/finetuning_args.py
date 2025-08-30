@@ -14,7 +14,7 @@
 
 from dataclasses import asdict, dataclass, field
 from typing import Any, Literal, Optional
-
+from .custom_args import GKDArguments, GRPOArguments
 
 @dataclass
 class FreezeArguments:
@@ -205,36 +205,6 @@ class RLHFArguments:
 
 
 @dataclass
-class GKDArguments:
-    r"""Arguments pertaining to the Generalized Knowledge Distillation (GKD) training."""
-
-    teacher_model: Optional[str] = field(
-        default=None,
-        metadata={"help": "Path to the teacher model used for the GKD training."},
-    )
-    teacher_model_adapters: Optional[str] = field(
-        default=None,
-        metadata={"help": "Path to the adapters of the teacher model."},
-    )
-    teacher_model_quantization_bit: Optional[int] = field(
-        default=None,
-        metadata={"help": "The number of bits to quantize the teacher model."},
-    )
-    gkd_alpha: float = field(
-        default=1.0,
-        metadata={"help": "The weight of the KL divergence loss in GKD training."},
-    )
-    gkd_beta: float = field(
-        default=0.5,
-        metadata={"help": "The weight of the teacher logits in GKD training."},
-    )
-    gkd_temperature: float = field(
-        default=3.0,
-        metadata={"help": "The temperature for softmax in GKD training."},
-    )
-
-
-@dataclass
 class GaloreArguments:
     r"""Arguments pertaining to the GaLore algorithm."""
 
@@ -417,7 +387,7 @@ class SwanLabArguments:
 
 @dataclass
 class FinetuningArguments(
-    SwanLabArguments, BAdamArgument, ApolloArguments, GaloreArguments, RLHFArguments, GKDArguments, LoraArguments, FreezeArguments
+    SwanLabArguments, BAdamArgument, ApolloArguments, GaloreArguments, RLHFArguments, GKDArguments, GRPOArguments, LoraArguments, FreezeArguments
 ):
     r"""Arguments pertaining to which techniques we are going to fine-tuning with."""
 
@@ -425,7 +395,7 @@ class FinetuningArguments(
         default=False,
         metadata={"help": "Whether or not to train model in purely bf16 precision (without AMP)."},
     )
-    stage: Literal["pt", "sft", "rm", "ppo", "dpo", "kto", "gkd"] = field(
+    stage: Literal["pt", "sft", "rm", "ppo", "dpo", "kto", "gkd", "grpo"] = field(
         default="sft",
         metadata={"help": "Which stage will be performed in training."},
     )

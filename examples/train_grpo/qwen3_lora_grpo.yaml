@@ -1,0 +1,52 @@
+# 基于TRL的GRPO训练器配置示例
+# 参考 factory 中 gkd 的实现，添加基于 trl 的 grpotrainer
+
+### 模型参数
+model_name_or_path: /Users/mac/Documents/models/Qwen3-0.6B
+# quantization_bit: 4
+trust_remote_code: true
+
+### 数据参数
+dataset: ultrafeedback-prompt-train
+template: qwen3
+cutoff_len: 1024
+overwrite_cache: true
+preprocessing_num_workers: 16
+
+### 训练参数
+stage: grpo
+do_train: true
+finetuning_type: lora
+lora_target: all
+lora_rank: 8
+lora_alpha: 16
+lora_dropout: 0.1
+
+### GRPO特定参数
+grpo_beta: 0.1                    # KL正则化系数
+grpo_temperature: 1.0             # 温度参数
+grpo_response_length: 2048        # 最大响应长度
+grpo_local_rollout_forward_batch_size: 64  # 本地rollout前向批次大小
+grpo_num_ppo_epochs: 4            # PPO epochs数量
+grpo_num_mini_batches: 1          # mini-batches数量
+grpo_whiten_rewards: false        # 是否白化奖励
+reference_model: /Users/mac/Documents/models/Qwen3-1.7B  # 参考模型路径
+
+### 优化器参数
+per_device_train_batch_size: 1
+gradient_accumulation_steps: 8
+learning_rate: 5.0e-6
+num_train_epochs: 3.0
+lr_scheduler_type: cosine
+warmup_ratio: 0.1
+
+### 其他参数
+# fp16: true
+logging_steps: 10
+save_steps: 500
+output_dir: ./saves/qwen3-0.6b-grpo
+overwrite_output_dir: true
+ddp_timeout: 180000000
+include_num_input_tokens_seen: true
+report_to: None
+# save_safetensors: true

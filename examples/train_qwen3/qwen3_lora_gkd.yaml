@@ -1,7 +1,7 @@
 ### model
-model_name_or_path: "E:\\Projects\\models\\Qwen3-0.6B"
+model_name_or_path: "/Users/mac/Documents/models/Qwen3-0.6B"
 trust_remote_code: true
-teacher_model: "E:\\Projects\\models\\Qwen3-1.7B"
+teacher_model: "/Users/mac/Documents/models/Qwen3-1.7B"
 # gradient_checkpointing: false
 
 ### method

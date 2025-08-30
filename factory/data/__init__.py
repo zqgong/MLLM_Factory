@@ -20,7 +20,7 @@ from .collator import (
     GKDDataCollatorWithPadding,
 )
 from .data_utils import Role, split_dataset
-from .loader import get_dataset
+from .loader import get_dataset, get_trl_dataset
 from .template import TEMPLATES, Template, get_template_and_fix_tokenizer
 
 
@@ -34,6 +34,7 @@ __all__ = [
     "SFTDataCollatorWith4DAttentionMask",
     "Template",
     "get_dataset",
+    "get_trl_dataset",
     "get_template_and_fix_tokenizer",
     "split_dataset",
 ]

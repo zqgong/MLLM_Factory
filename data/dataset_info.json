@@ -1,4 +1,9 @@
 {
+  "ultrafeedback-prompt-train": {
+    "file_name": "/Users/mac/Documents/GitHub/MLLM_Factory/data/ultrafeedback-prompt",
+    "split": "train"
+  },
+
   "identity": {
     "file_name": "identity.json"
   },
