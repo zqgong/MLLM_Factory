@@ -36,6 +36,7 @@ from .ppo import run_ppo
 from .pt import run_pt
 from .rm import run_rm
 from .sft import run_sft
+from .gold import run_gold
 from .trainer_utils import get_ray_trainer, get_swanlab_callback
 
 
@@ -53,7 +54,7 @@ logger = logging.get_logger(__name__)
 
 def _training_function(config: dict[str, Any]) -> None:
     args = config.get("args")
-    callbacks: list[Any] = config.get("callbacks")
+    callbacks: list[Any] = config.get("callbacks") or []
     model_args, data_args, training_args, finetuning_args, generating_args = get_train_args(args)
 
     callbacks.append(LogCallback())
@@ -84,6 +85,8 @@ def _training_function(config: dict[str, Any]) -> None:
         run_gkd(model_args, data_args, training_args, finetuning_args, generating_args, callbacks)
     elif finetuning_args.stage == "grpo":
         run_grpo(model_args, data_args, training_args, finetuning_args, generating_args, callbacks)
+    elif finetuning_args.stage == "gold":
+        run_gold(model_args, data_args, training_args, finetuning_args, generating_args, callbacks)
     else:
         raise ValueError(f"Unknown task: {finetuning_args.stage}.")
 
@@ -98,13 +101,13 @@ def _training_function(config: dict[str, Any]) -> None:
 
 
 def run_exp(args: Optional[dict[str, Any]] = None, callbacks: Optional[list["TrainerCallback"]] = None) -> None:
-    args = read_args(args)
+    args = read_args(args) or {}
     if "-h" in args or "--help" in args:
         get_train_args(args)
 
     ray_args = get_ray_args(args)
     callbacks = callbacks or []
-    if ray_args.use_ray:
+    if ray_args.use_ray and is_ray_available():
         callbacks.append(RayTrainReportCallback())
         trainer = get_ray_trainer(
             training_function=_training_function,
@@ -148,7 +151,8 @@ def export_model(args: Optional[dict[str, Any]] = None) -> None:
             output_dtype = getattr(torch, model_args.infer_dtype)
 
         setattr(model.config, "torch_dtype", output_dtype)
-        model = model.to(output_dtype)
+        if hasattr(model, 'to'):
+            model = model.to(output_dtype)
         logger.info_rank0(f"Convert model dtype to: {output_dtype}.")
 
     model.save_pretrained(
